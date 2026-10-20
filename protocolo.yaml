@@ -1,0 +1,414 @@
+# Protocolo de falseamento do TG — SBSJ
+#
+# Registrado ANTES da execução. O SHA-256 deste arquivo vai para o
+# repositório (commit + tag) antes de qualquer célula do notebook rodar.
+# Depois disso, este arquivo não muda: correção vira nova versão, com
+# motivo, e o hash antigo continua citado.
+
+protocolo:
+  versao: "0.4"
+  estado: pronto_para_congelar            # passa a "congelado" quando os bloqueios abaixo caírem
+  historico:
+    - {versao: "0.1", sha256: 17625641524769a5b2ede2d644b148510089e4c8961df52a7e20580306e32689, conteudo: "H2"}
+    - {versao: "0.2", conteudo: "H1, H3 e H4 acrescentadas; caused_by no envelope"}
+    - {versao: "0.4", conteudo: "unidade de teste de H1 = contorno como desenhado, sem segmentação manual"}
+    - {versao: "0.3", conteudo: "tolerância de H1 = max(contrato, oráculo); calibração do ADC (r_cal = 0,18 m); extração de contornos"}
+  pendencias_que_nao_bloqueiam:
+    - "Citar os valores de exatidão do contrato ADC a partir do Catálogo de Dados Aeronáuticos (PANS-AIM App. 1, arquivo eletrônico) ou da Tab. A5-1 do Anexo 14 Vol. I, 7ª ed. (2016). Não muda veredito, salvo a condição registrada em H1.contrato_ADC.condicao_de_reabertura."
+  bloqueios_para_congelar: []
+  autor: Heyder
+  data_rascunho: 2026-10-20
+
+regras_gerais:
+  tolerancia_por_hipotese: >-
+    Nunca escolhida; cada uma sai de uma fonte declarada. H1: exatidão do
+    contrato ADC e precisão medida da carta. H2: precisão de publicação (regra
+    abaixo). H3: resultado exato (detectado ou não, e qual evento). H4: modelo
+    de custo do índice.
+  tolerancia: >-
+    Para comparações com valores publicados: a soma, em pior caso (aritmética de intervalos), de meia
+    unidade da última casa publicada de cada grandeza de entrada, propagada até
+    a grandeza comparada, mais meia unidade da última casa do valor publicado
+    com que se compara. O cálculo está em derivar_tolerancias.py (hash abaixo).
+  veredito: "PASSOU se |observado − predito| ≤ tolerância; FALHOU caso contrário. Sem meio-termo."
+  classificacao_de_falha: >-
+    Uma falha só refuta a tese se a correção exigir violar um princípio da
+    arquitetura (premissa retida, derivado não armazenado, ledger só de escrita,
+    transaction-time). Caso contrário é falha de implementação: registrada com
+    o valor observado, corrigida, e o teste reexecutado em nova versão do run.
+  resolucoes_normativas: >-
+    As resoluções usadas nas tolerâncias de H2 são exigidas pelo PANS-AIM
+    (Doc 10066, 1ª ed. 2018, App. 2): AD 2.12 — rumos verdadeiros a 0,01°,
+    dimensões ao metro, coordenadas de cabeceira a 0,01"; elevação e ondulação
+    a 0,1 m em cabeceira de precisão e ao metro em não precisão (explica 619,3
+    e −2,6 na RWY 16, PA-1, contra 647 e −3 na RWY 34, NPA); AD 2.13 —
+    distâncias declaradas ao metro; AD 2.2 — variação magnética ao grau.
+    O AD 2.12 exige também coordenadas do fim de pista, que o SBSJ não publica.
+  independencia_do_oraculo: >-
+    Nenhuma premissa valida a si mesma. Premissas vêm do AD 2.12; os derivados
+    são comparados ao ADC e ao próprio AD 2.12 em campos que não entraram no
+    modelo; o gabarito do ato 4 é outro algoritmo, em outro código (gabarito/).
+
+fontes:
+  F1:
+    documento: "ADC SBSJ — Carta de Aeródromo"
+    edicao: "AIRAC AMDT 2604A1, efetiva 16 APR 26"
+    arquivo: sbsj_sbsj-adc_adc_20260416_2.pdf
+    sha256: 95147c4f14c2a5d0f8597650989554a455b0d142e3908302b9f691365c4f1c9a
+  F2:
+    documento: "AOC SBSJ — Carta de Obstáculos de Aeródromo Tipo A"
+    edicao: "AIRAC AMDT 2213A1, efetiva 29 DEC 22"
+    arquivo: sbsj_ad-2-sbsj_aoc_20221229.pdf
+    sha256: 87c6dc81bacd83020a9f45cadf22a62bc72a7df9fc964266c7c513fc732800b0
+    uso: "prólogo apenas (BASELINE em modo forma); não é oráculo de H2"
+  F3:
+    documento: "AIP Brasil, SBSJ AD 2.12 — Características físicas da pista"
+    edicao: "eAIP Brasil, edição 20-2026, efetiva 01 OCT 2026 (identificada pelo endereço; a página não traz AMDT)"
+    url: "https://aisweb.decea.mil.br/eaip/20-2026_2026_10_01/eAIP/AD%202%20SBSJ-pt-BR.html"
+    arquivo: 1792522008123_image.png
+    conferencia: "valores do print idênticos aos da página em 20/10/2026"
+    sha256: 93f5b359eb6c9cc0ed5fe64ad018f25f7237587cfd339a7a91d6086970dddd6f
+  F4:
+    documento: "AIP Brasil, SBSJ AD 2.13 — Distâncias declaradas"
+    edicao: "mesma de F3"
+    url: "https://aisweb.decea.mil.br/eaip/20-2026_2026_10_01/eAIP/AD%202%20SBSJ-pt-BR.html"
+  consistencia_entre_fontes:
+    - "Distâncias declaradas: F4 idêntica à tabela de F1 nas duas cabeceiras."
+    - "Coordenadas das cabeceiras: F3 arredondada a segundos inteiros reproduz F1 nas duas cabeceiras."
+    - "Ondulação geoidal: F1 −2,56/−2,60 m; F3 −2,6/−3 m — compatíveis com o arredondamento de F3."
+
+artefatos_registrados:
+  derivar_tolerancias.py: c920cae2facd64b9959608f1330d66b7482454035e30022de22e135420f03e5f      # preenchido por registrar_hashes.sh
+  gabarito/geodesia.py: c0745a9f2db01fe58b25f3c88effa5d34731e988322bdc3b8687b07c981f9650
+  gabarito/test_geodesia.py: f57ff32d3b3549296b195363adb3a50c62c90d221bf8f87d5de0871dced6ef7e
+  adc/: "hashes de adc_geo.py, calibrar_adc.py, extrair_contornos.py, calibracao.json e contornos_brutos.geojson em PROTOCOLO.sha256"
+  validacao_do_gabarito: >-
+    Caso publicado de Vincenty no GRS80 (Flinders Peak → Buninyong,
+    54 972,271 m). O gabarito NÃO é executado sobre o SBSJ antes do
+    congelamento, para não antecipar o resultado do ato 1.
+
+ambiente:
+  semente_sintetica: 20261020     # fase C (epílogo); fixada aqui, não usada em H2
+  elipsoide: "GRS80 (SIRGAS2000)"
+  versoes: "registradas em ambiente.lock no passo 0, antes do congelamento"
+
+premissas:                         # entram no ledger; nunca são comparadas a si mesmas
+  THR16: {lat: "231310.79S", lon: "0455219.08W", elev_m: 619.3, gund_m: -2.6, fonte: F3, resolucao: '0,01"'}
+  THR34: {lat: "231412.21S", lon: "0455112.46W", elev_m: 647,   gund_m: -3,   fonte: F3, resolucao: '0,01"'}
+  largura_rwy_m: {valor: 45, fonte: F3}
+  SWY: {comprimento_m: 283, largura_m: 45, posicao: "além da THR 34 (dá ASDA à RWY 16)", fonte: [F1, F3]}
+  CWY: {valor: NIL, fonte: F3}
+  VAR: {valor: "22°W", epoca: 2026, fonte: F1, papel: norma}
+  regra_distancias_declaradas:     # norma, premissa (Anexo 14 Vol. I, definições; RBAC 154)
+    TORA: "comprimento da pista disponível para corrida (sem início de corrida deslocado)"
+    TODA: "TORA + CWY"
+    ASDA: "TORA + SWY"
+    LDA:  "comprimento da pista − deslocamento de cabeceira (zero em SBSJ)"
+
+H2:
+  afirmacao: "Todo dado não-premissa é calculado, não armazenado."
+  refutada_se: "trocar uma premissa exigir reescrever dados derivados (seeds)."
+  teste_decisivo: >-
+    Ato 1: comprimento, azimute e distâncias declaradas derivados batem com o
+    AIP. Ato 4: após troca de referencial, zero seeds alteradas e geometria
+    igual ao gabarito transformado.
+
+  metodo_de_derivacao:             # fixado antes, para o resultado não escolher o método
+    comprimento: "distância geodésica entre THR16 e THR34 sobre o GRS80 (altura elipsoidal zero)"
+    azimute_verdadeiro: "azimute geodésico em cada cabeceira, apontando para a oposta"
+    rumo_magnetico: "azimute verdadeiro + 22° (VAR oeste), comparado ao inteiro publicado"
+
+  efeitos_sistematicos_declarados: # fora da tolerância; só orientam a classificação de falha
+    inclinacao: "+0,143 m — Δh²/2L com Δh = 647 − 619,3 m"
+    altura_elipsoidal: "+0,259 m — L·h/R com h ≈ 616,7 m"
+    leitura: >-
+      Se a falha do comprimento for de até 0,402 m com o derivado MENOR que o
+      publicado, a causa provável é a superfície de cálculo (o publicador pode
+      medir sobre o terreno). Veredito continua FALHOU; classificação:
+      implementação (método), não arquitetura.
+
+  ato1:                            # Fase A, sobre o estado após a fundação AIRAC 2604
+    instante: "t₁, fim do ato 1"
+    verificacoes:
+      - {id: H2.01, grandeza: "comprimento da pista",              oraculo: "F3 col. 3 / F1",     publicado: 2675,   unidade: m,    tolerancia: 0.919}
+      - {id: H2.02, grandeza: "azimute verdadeiro em THR16",       oraculo: "F3 col. 2",          publicado: 134.93, unidade: grau, tolerancia: 0.014}
+      - {id: H2.03, grandeza: "azimute verdadeiro em THR34",       oraculo: "F3 col. 2",          publicado: 314.92, unidade: grau, tolerancia: 0.014}
+      - {id: H2.04, grandeza: "rumo magnético RWY 16",             oraculo: "F1 BRG MAG",         publicado: 157,    unidade: grau, tolerancia: 1.009}
+      - {id: H2.05, grandeza: "rumo magnético RWY 34",             oraculo: "F1 BRG MAG",         publicado: 337,    unidade: grau, tolerancia: 1.009}
+      - {id: H2.06, grandeza: "TORA 16",                           oraculo: "F4 (AD 2.13)",       publicado: 2675,   unidade: m,    tolerancia: 0.919}
+      - {id: H2.07, grandeza: "TODA 16",                           oraculo: "F4 (AD 2.13)",       publicado: 2675,   unidade: m,    tolerancia: 0.919}
+      - {id: H2.08, grandeza: "ASDA 16",                           oraculo: "F4 (AD 2.13)",       publicado: 2958,   unidade: m,    tolerancia: 1.419}
+      - {id: H2.09, grandeza: "LDA 16",                            oraculo: "F4 (AD 2.13)",       publicado: 2675,   unidade: m,    tolerancia: 0.919}
+      - {id: H2.10, grandeza: "TORA 34",                           oraculo: "F4 (AD 2.13)",       publicado: 2675,   unidade: m,    tolerancia: 0.919}
+      - {id: H2.11, grandeza: "TODA 34",                           oraculo: "F4 (AD 2.13)",       publicado: 2675,   unidade: m,    tolerancia: 0.919}
+      - {id: H2.12, grandeza: "ASDA 34",                           oraculo: "F4 (AD 2.13)",       publicado: 2675,   unidade: m,    tolerancia: 0.919}
+      - {id: H2.13, grandeza: "LDA 34",                            oraculo: "F4 (AD 2.13)",       publicado: 2675,   unidade: m,    tolerancia: 0.919}
+      - id: H2.14
+        grandeza: "derivados ausentes do ledger"
+        predicao: >-
+          Zero linhas em event_field cujo último segmento do path seja tora,
+          toda, asda, lda, azimute, azimuth, rumo ou bearing (qualquer feature),
+          e zero linhas com comprimento/length na feature runway.
+        oraculo: "consulta ao próprio ledger"
+        tolerancia: 0                # contagem
+    origem_das_tolerancias:
+      comprimento: "0,5 m (publicado a 1 m) + 0,419 m (0,005\" nas duas cabeceiras, projetado no eixo)"
+      azimute: "0,005° (publicado a 0,01°) + 0,009° (mesmo arredondamento, projetado na normal, ÷ L)"
+      rumo_magnetico: "0,5° (BRG MAG inteiro) + 0,5° (VAR inteira) + 0,009°"
+      ASDA16: "tolerância do comprimento + 0,5 m (SWY publicada a 1 m)"
+      nota: "o plano previa 0,5 m para as distâncias declaradas; não sai da precisão de publicação, porque TORA herda o erro de L."
+
+  ato4:                            # Fase B, nova medição
+    cenario:                       # premissa do cenário, fixada antes; gabarito conhecido
+      descricao: >-
+        THR 34 remedida: 1,00 m para fora no prolongamento do eixo (134,92°)
+        e 0,50 m para sudoeste (224,92°), republicada a 0,01".
+        Deslocamento efetivo após o arredondamento: 0,966 m.
+      THR34_v2: {lat: "231412.24S", lon: "0455112.45W", elev_m: 647}
+      THR16_v2: "inalterada"
+      escrita_esperada: "um novo corpo de referencial (novo ref_id) e um DELTA na feature airport"
+    regra_de_resolucao_de_seed:    # premissa de arquitetura que o teste exige explicitar
+      forma: "seed = (referente, s, o) — ISO 19148: DistanceExpression a partir de um Referent + LateralOffset"
+      s: "distância geodésica ao longo do eixo, a partir do referente, positiva em direção ao outro referente"
+      o: "afastamento lateral geodésico, positivo à direita de quem anda do referente para o outro"
+      implementacao_do_gabarito: "gabarito/geodesia.py :: resolver()"
+    vertices_verificados:
+      - {seed: "RWY canto 16-dir",  referente: THR16, s: 0,    o:  22.5}
+      - {seed: "RWY canto 16-esq",  referente: THR16, s: 0,    o: -22.5}
+      - {seed: "RWY canto 34-dir",  referente: THR34, s: 0,    o:  22.5}
+      - {seed: "RWY canto 34-esq",  referente: THR34, s: 0,    o: -22.5}
+      - {seed: "SWY canto ext-dir", referente: THR34, s: -283, o:  22.5}
+      - {seed: "SWY canto ext-esq", referente: THR34, s: -283, o: -22.5}
+    verificacoes:
+      - {id: H2.15, predicao: "exatamente 1 evento entre o início e o fim do ato 4: DELTA na feature airport, único path alterado = ref_id", tolerancia: 0}
+      - {id: H2.16, predicao: "zero eventos em features portadoras de seed (runway, protect_area, taxiway, apron) no ato 4", tolerancia: 0}
+      - {id: H2.17, predicao: "nenhum path de comprimento ou distância declarada escrito no ato 4 (o comprimento novo é derivado, não digitado)", tolerancia: 0}
+      - {id: H2.18, predicao: "cada vértice verificado, resolvido pelo motor com ref v1 e com ref v2, coincide com o gabarito", oraculo: "gabarito/geodesia.py", tolerancia_m: 0.0005}
+      - {id: H2.19, predicao: "comprimento e azimutes derivados pelo motor com ref v2 coincidem com o gabarito (inversa THR16 → THR34_v2)", oraculo: "gabarito/geodesia.py", tolerancia: "0,0005 m; azimute 0,0005/L rad (1,1e-5°)"}
+    origem_das_tolerancias:
+      numerica: "0,5 mm — exatidão declarada da fórmula de Vincenty (1975), o algoritmo menos exato dos dois lados da comparação."
+      leitura_de_falha: >-
+        Se o motor usar outra superfície (projeção plana local, UTM) e passar de
+        0,5 mm, é implementação. Se algum vértice exigir alterar a seed para
+        coincidir (ex.: seed com estaca absoluta a partir de THR16 e fim da
+        pista digitado como número), é arquitetura: H2 refutada.
+
+  fora_deste_protocolo:
+    ato2_barreira: >-
+      Também é derivação (R12), mas depende da regra de distâncias declaradas
+      com barreira, adiada nas decisões. Entra na v0.2 do protocolo.
+
+# ---------------------------------------------------------------------------
+
+H1:
+  afirmacao: >-
+    Para o uso ADC, primitivos simples (ponto, retângulo, coroa) geram
+    envoltórias conservadoras dentro da tolerância do contrato.
+  refutada_se: "algum elemento do ADC exigir forma fora dos primitivos para caber na tolerância."
+  divisao_do_teste: >-
+    O layout de taxiways e pátios entra digitalizado do ADC (entrada). Compará-lo
+    com o mesmo ADC não valida posição; só testa se os primitivos conseguem
+    representar a forma. Por isso H1 se divide em duas perguntas diferentes.
+    H1a (expressividade): todos os elementos de área, contra o contorno da carta.
+    H1b (posição): só os elementos gerados de premissas do AIP (RWY e SWY),
+    contra o desenho da carta, que é fonte independente da tabela AD 2.12.
+
+  oraculo:
+    fonte: F1
+    natureza: >-
+      PDF vetorial (2264 objetos na folha 1, sem imagem raster). Escala
+      aproximada 1:21 000 (7,38 m por ponto tipográfico, pela gratícula de 30").
+      Traço dos contornos: 0,48 pt, cerca de 3,5 m no terreno.
+    georreferenciamento: >-
+      Transformação afim ajustada por mínimos quadrados às interseções da
+      gratícula impressa (S23 13 00 a S23 14 30; W045 51 00 a W045 52 00).
+      Resíduo máximo do ajuste registrado como r_cal.
+    procedimento: "adc/calibrar_adc.py, adc/extrair_contornos.py, adc/adc_geo.py (hashes em artefatos_registrados)"
+    calibracao:
+      resultado: "r_cal = 0,18 m (adc/calibracao.json)"
+      tiques: "latitude 40/40 (resíduo máx 0,01 m); longitude 31/32 (resíduo máx 0,17 m)"
+      excluido: "tique de 45°51'06\" na base, desenhado 7,4 m fora do lugar (resíduo 92 vezes a mediana); erro de desenho do próprio tique"
+      projecao_da_carta: "gratícula girada 0,33° em relação à moldura: a carta está em norte de quadrícula (UTM), não em norte verdadeiro"
+      alcance: "r_cal mede a consistência da gratícula, não a fidelidade das feições ao terreno; esta é o que H1b mede"
+    unidade_de_teste: >-
+      Cada contorno como a carta o desenha, sem segmentação manual: um objeto
+      de preenchimento do PDF é uma unidade; um anel contido em outro do mesmo
+      objeto é furo (teste geométrico de contenção); os demais anéis são
+      unidades próprias. Designações (TWY A–E, APN 1–8) só rotulam, não cortam.
+      Assim nenhum recorte pode ser ajustado ao resultado.
+    consequencia: >-
+      A precisão do oráculo (metros) é pior que a exatidão do contrato
+      (0,5 a 1 m). A posição só pode ser validada na precisão da carta; a
+      exatidão de levantamento exigida pelo PANS-AIM não é testável com este
+      oráculo. Limite declarado, não contornado.
+
+  contrato_ADC:                    # tolerâncias de H1a; conferir no documento (bloqueio)
+    fonte: "Anexo 14 Vol. I, App. 5, Tab. A5-1 (8ª ed.), transposta ao PANS-AIM (Doc 10066), App. 1"
+    exatidao_de_pontos:
+      cabeceira_fim_e_eixo_de_pista: 1.0
+      eixo_de_taxiway: 0.5
+      limite_de_patio_poligono: 1.0
+      ARP: 30.0
+    nivel_de_confianca: >-
+      PANS-AIM, Doc 10066, nota (7): exatidões de dados aeronáuticos são a 95%
+      de confiança; ponto com duplo papel usa a exatidão mais exigente;
+      obstáculos e terreno a 90% (fora do escopo de H1).
+    papel_duplo: "borda compartilhada entre elementos de classes diferentes (ex.: TWY entrando em APN) usa a menor tolerância das duas"
+    regra: "tolerância de borda = exatidão dos pontos que a definem + metade da meia-resolução da dimensão publicada (a borda dista w/2 do eixo)"
+    tolerancias_de_contrato_m:   # valores ainda não conferidos no catálogo; não decidem o veredito
+      RWY: 1.25         # 1,0 + 0,25 (largura a 1 m)
+      SWY: 1.25         # definida pela cabeceira 34 (1,0) + largura (0,25)
+      STRIP: 1.25       # mesma regra; posição longitudinal é entrada (ver achado)
+      TWY: 0.75         # 0,5 + 0,25
+      APN: 1.0          # limite de pátio publicado como polígono
+    regra_de_tolerancia: >-
+      tolerância = max(exatidão do contrato, precisão do oráculo). Abaixo da
+      precisão do oráculo a carta não distingue uma forma da outra, então
+      exigir menos que isso não é testável com este oráculo.
+    precisao_do_oraculo:
+      H1a: "meia espessura do traço do contorno = 0,48 pt × 7,38 m/pt ÷ 2 = 1,77 m (envoltória e contorno estão no mesmo referencial da carta; o erro de georreferenciamento se cancela)"
+      H1b: "r_cal + 1,77 = 0,18 + 1,77 = 1,95 m (geometria do AIP contra desenho da carta: o georreferenciamento entra)"
+    tolerancias_m:      # as que decidem: max(contrato, 1,77)
+      RWY: 1.77
+      SWY: 1.77
+      STRIP: 1.77
+      TWY: 1.77
+      APN: 1.77
+    condicao_de_reabertura: >-
+      Se algum valor confirmado no catálogo der tolerância de contrato maior que
+      1,77 m, a tolerância daquela classe passa a ser a do contrato, em nova
+      versão do protocolo registrada antes da execução de H1.
+    o_que_H1_testa: >-
+      Que os primitivos cabem na precisão da carta. O nível de exatidão do
+      contrato (0,5 a 1,25 m) não é testável com este oráculo; limite declarado.
+    achado_strip: >-
+      3118 − 2675 − 283 = 160 m além de pista + SWY, sem divisão publicada entre
+      as pontas (na AOC 2213: 60 + 60 m). A posição longitudinal da faixa entra
+      digitalizada; só a forma é testada.
+
+  primitivos:
+    vocabulario: [ponto, retangulo, coroa]
+    composicao: "permitida, com limite: nº de primitivos ≤ nº de trechos do contorno de referência (segmentos retos máximos + arcos)."
+    razao_do_limite: >-
+      Sem limite, qualquer forma é aproximada por retângulos suficientes e H1
+      fica infalseável. O limite sai do próprio contorno: um primitivo por
+      trecho é representar; mais que isso é ajustar.
+    coroa_conservadora: "arco externo circunscrito, arco interno inscrito"
+    LOD_da_coroa: >-
+      N_min = menor número de segmentos com flecha R·(1 − cos(θ/2N)) ≤
+      tolerância da classe (contrato_ADC.tolerancias_m); testar em N_min, 2·N_min e 4·N_min.
+    nos: >-
+      Auxílios (LOC/DME, GP, PAPI, MALSR, TWR, RFFS) e ARP são nós só
+      topológicos com posição; não têm envoltória e ficam fora de H1. Resolve,
+      para o uso ADC, a tensão "degeneração em nó não é conservadora".
+
+  elementos: "pista (972), SWY (974), faixa (788) e todas as unidades de pavimento de contornos_brutos.geojson; classe TWY ou APN para a tolerância é indiferente, pois as duas valem 1,77 m"
+
+  verificacoes:
+    - id: H1.01
+      escopo: "cada elemento, em cada LOD"
+      predicao: "contenção: contorno de referência ⊆ envoltória"
+      metrica: "distância de Hausdorff dirigida (contorno → envoltória)"
+      tolerancia_m: 1.0e-6
+      origem: "guarda numérica: 6 ordens acima do arredondamento float64 em coordenadas de 10⁴ m e 5 abaixo da menor tolerância de classe"
+    - id: H1.02
+      escopo: "cada elemento, no LOD N_min"
+      predicao: "desvio: percentil 95 da distância entre a borda da envoltória e o contorno ≤ tolerância da classe"
+      metrica: "distância ponto-a-contorno amostrada ao longo da borda da envoltória a cada 0,1 m; o máximo (Hausdorff) é reportado, não decide"
+      tolerancia: "contrato_ADC.tolerancias_m (max entre contrato e oráculo)"
+      origem: "o contrato define exatidão a 95% (nota 7); exigir 100% testaria algo que o consumidor não pede. A contenção (H1.01) continua em 100%, porque ser conservador é propriedade do modelo, não do contrato."
+    - id: H1.03
+      escopo: "cada elemento"
+      predicao: "nº de primitivos ≤ nº de trechos do contorno"
+      contagem: "n_trechos de contornos_brutos.geojson: itens do caminho no PDF, retas colineares (desvio < 0,01 pt) fundidas, curva = 1 trecho, somados os anéis do elemento"
+      tolerancia: 0
+    - id: H1.04
+      escopo: "coroas"
+      predicao: "desvio não cresce de N_min para 2·N_min e 4·N_min, e a contenção vale nos três"
+      tolerancia: "H1.01"
+    - id: H1.05
+      escopo: "RWY e SWY (H1b, posição)"
+      predicao: "geometria gerada das premissas do AD 2.12 coincide com o contorno da carta"
+      metrica: "distância de Hausdorff"
+      tolerancia_m: 1.95
+      origem: "r_cal (0,18 m, calibrar_adc.py) + meia espessura do traço (1,77 m)"
+
+# ---------------------------------------------------------------------------
+
+H3:
+  afirmacao: "O ledger retém tudo e evidencia adulteração."
+  refutada_se: "alguma adulteração dentro do modelo de ameaça passar sem detecção."
+
+  hash:
+    entrada: >-
+      Todos os campos do envelope (event_id, run_id, feature_id, feature_type,
+      event_type, asserted_by, owner_ref, reason, caused_by, prev_hash) e todas
+      as linhas de event_field do evento, ordenadas por path, em JCS (RFC 8785).
+    verify_chain: "recalcula o hash do conteúdo atual de cada evento e confere a ligação prev_hash; devolve o primeiro event_id divergente, ou vazio"
+    caused_by: "novo campo de envelope: event_id do evento que motivou esta escrita (ex.: DELTA de referencial)"
+
+  modelo_de_ameaca:
+    atacante: "escrita direta no Postgres (UPDATE, DELETE, INSERT), sem passar por append_event"
+    fora_do_alcance_sem_ancora: >-
+      Alterações que não deixam sucessor na cadeia (mexer na cabeça, truncar,
+      reescrever da posição k até a cabeça) são indistinguíveis de uma
+      história legítima para quem só olha o banco. Elas são previstas como
+      não detectadas por verify_chain, e detectadas só contra uma âncora.
+    ancora: >-
+      Hash da cabeça impresso ao fim de cada ato e registrado no repositório
+      (commit). Decisão em aberto: entra na arquitetura ou fica como limite
+      declarado. As predições cobrem os dois casos.
+
+  execucao: "sobre uma cópia do banco ao fim do ato 5, restaurada antes de cada ataque; k = evento do meio, cabeça = último evento"
+
+  verificacoes:                    # resultado exato: detectado ou não, e qual event_id
+    - {id: H3.01, ataque: "UPDATE em event_field.next do evento k, sem recalcular hash",          verify_chain: "detecta, devolve k",   com_ancora: detecta}
+    - {id: H3.02, ataque: "UPDATE no corpo de k recalculando o hash de k",                        verify_chain: "detecta, devolve k+1", com_ancora: detecta}
+    - {id: H3.03, ataque: "UPDATE em asserted_by de k, sem recalcular hash",                      verify_chain: "detecta, devolve k",   com_ancora: detecta}
+    - {id: H3.04, ataque: "DELETE de uma linha de event_field de k",                              verify_chain: "detecta, devolve k",   com_ancora: detecta}
+    - {id: H3.05, ataque: "DELETE do evento k",                                                   verify_chain: "detecta, devolve k+1", com_ancora: detecta}
+    - {id: H3.06, ataque: "INSERT entre k e k+1 com hash próprio correto e prev_hash = hash(k)",  verify_chain: "detecta, devolve k+1", com_ancora: detecta}
+    - {id: H3.07, ataque: "UPDATE no corpo da cabeça recalculando o hash da cabeça",              verify_chain: "não detecta",          com_ancora: detecta}
+    - {id: H3.08, ataque: "DELETE da cabeça (truncamento)",                                       verify_chain: "não detecta",          com_ancora: detecta}
+    - {id: H3.09, ataque: "reescrita de k até a cabeça recalculando todos os hashes",             verify_chain: "não detecta",          com_ancora: detecta}
+    - id: H3.10
+      ataque: nenhum (retenção)
+      predicao: "nº de eventos no banco ao fim do ato 5 = nº de chamadas a append_event no log do notebook; verify_chain vazio"
+      tolerancia: 0
+  nota: >-
+    O plano previa "detecta corpo, envelope, deleção e inserção; não detecta a
+    reescrita total". A posição do ataque importa: na cabeça, alteração e
+    truncamento caem na mesma classe da reescrita total (H3.07–H3.09).
+
+# ---------------------------------------------------------------------------
+
+H4:
+  afirmacao: "Cada consumidor obtém via contrato só o que precisa, a custo viável."
+  refutada_se: "o custo crescer com o histórico total, ou um contrato exigir estado materializado como fonte de verdade."
+
+  desenho:
+    eventos_relevantes: "os K eventos dos atos 1 a 4 lidos pelo contrato ADC (fixos em todas as escalas)"
+    tamanhos: "N ∈ {10³, 10³·⁵, 10⁴, 10⁴·⁵, 10⁵, 10⁵·⁵, 10⁶} eventos no total"
+    series:
+      S1: "eventos irrelevantes em outras features (incidentes, obstáculos fora do ADC), intercalados no tempo"
+      S2: "eventos irrelevantes nas MESMAS features do ADC, em camadas fora do contrato (ex.: manutencao.*, inspecao.*)"
+    semente: 20261020
+    medida: "mediana de 21 execuções após 3 de aquecimento, cache quente; reconstrução do estado em t e projeção do ADC"
+    indices_exigidos: "event(feature_id, event_id); event_field(event_id, path); índice por (feature_id, prefixo de camada) para S2"
+    hardware: "registrado na saída do script de escala"
+
+  limite_da_inclinacao:
+    valor: 0.10
+    origem: >-
+      Se o custo for dominado pela descida no índice (B-tree), t ∝ ln N. A
+      inclinação média de ln t contra ln N entre 10³ e 10⁶ é então
+      ln(ln 10⁶ / ln 10³) / ln 10³ = ln 2 / 6,91 = 0,100. Varredura sequencial
+      daria 1,0. Custos fixos (os K eventos relevantes) só diminuem a inclinação.
+    leitura: "inclinação acima de 0,10 indica componente que cresce mais que logaritmicamente com o histórico"
+
+  verificacoes:
+    - {id: H4.01, predicao: "inclinação log-log (MQO sobre os 7 pontos) da série S1 ≤ 0,10", tolerancia: "o próprio limite; IC 95% por bootstrap reportado"}
+    - {id: H4.02, predicao: "inclinação log-log da série S2 ≤ 0,10", tolerancia: "idem", nota: "é o teste do contrato como lente: só passa se a peneira por camada usar índice antes do DISTINCT ON"}
+    - {id: H4.03, predicao: "em N = 10⁶, o EXPLAIN das consultas de estado e de projeção não tem Seq Scan em event nem em event_field", tolerancia: 0}
+    - {id: H4.04, predicao: "o plano da projeção do ADC só lê event, event_field e o corpo do referencial; nenhuma tabela de estado materializado", tolerancia: 0}
+    - {id: H4.05, predicao: "ADC projetado com cache e recalculado do zero são idênticos em todo N", tolerancia: "igualdade exata do conteúdo canônico (JCS)"}

@@ -1,0 +1,41 @@
+{
+  "fonte": "sbsj_sbsj-adc_adc_20260416_2.pdf",
+  "r_cal_m": 0.17539037386468473,
+  "convencao": "valor = segundos dentro do grau; lat = -(23 + v/3600), lon = -(45 + v/3600); (x, y) em pontos da página 1",
+  "ajuste": {
+    "lat": {
+      "coef": [
+        0.001414257571257236,
+        0.2401078493547556,
+        754.0066879904771
+      ],
+      "n_tiques": 40,
+      "n_mantidos": 40,
+      "residuo_max_m": 0.012122350685627333,
+      "residuo_mediano_m": 0.0027999480158261217,
+      "residuo_rms_m": 0.0034498552761482834,
+      "excluidos": []
+    },
+    "lon": {
+      "coef": [
+        -0.25981203552194254,
+        0.0015418296123095336,
+        3156.5315179404797
+      ],
+      "n_tiques": 32,
+      "n_mantidos": 31,
+      "residuo_max_m": 0.17497094575456965,
+      "residuo_mediano_m": 0.07883270781527496,
+      "residuo_rms_m": 0.0888629177229229,
+      "excluidos": [
+        {
+          "borda": "base",
+          "x": 350.75,
+          "y": 579.48,
+          "valor_s": 3066.0,
+          "residuo_m": 7.37
+        }
+      ]
+    }
+  }
+}
