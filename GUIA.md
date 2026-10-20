@@ -48,10 +48,23 @@ tg-sbsj/
 │   ├── derivar_tolerancias.py
 │   ├── gabarito/            gabarito geodésico independente (Vincenty)
 │   └── adc/                 calibração do ADC e extração de contornos (oráculo de H1)
-└── artefato/                o artefato do TG
-    ├── db/                  esquema e consultas SQL
-    ├── tg/                  pacote Python
-    └── tests/               testes do mecanismo (aeródromo fictício)
+├── artefato/                o artefato do TG
+│   ├── db/                  esquema e consultas SQL
+│   ├── tg/                  pacote Python
+│   └── tests/               testes do mecanismo (aeródromo fictício)
+├── experimento/             a avaliação: o notebook e o que ele usa
+│   ├── a_vida_do_sbsj.ipynb notebook narrativo, com as verificações (gerado)
+│   ├── montar_notebook.py   fonte do notebook (texto e células)
+│   ├── registro.py          protocolo, vereditos e registro de execuções
+│   ├── fontes.py            dados do SBSJ, com fonte e papel
+│   ├── digitalizacao.py     do desenho do ADC às seeds (ajuste de primitivos)
+│   ├── metricas.py          métricas de H1
+│   ├── ataques.py           bateria de adulteração de H3
+│   ├── escala.py            epílogo de H4 (script separado)
+│   ├── figuras.py, apoio.py
+└── resultados/
+    ├── execucoes.jsonl      registro de todas as execuções (só se acrescenta)
+    └── <exec_id>/           vereditos e figuras de cada execução
 ```
 
 ---
@@ -244,7 +257,31 @@ docker compose exec jupyter python -m pytest -q artefato/tests
 
 O serviço `db` carrega o esquema (incluindo o PostGIS opcional) na primeira subida. **Os arquivos de Docker não foram testados contra um daemon Docker real**: o ambiente de desenvolvimento não tinha um. Rode uma vez antes de depender deles.
 
-### 6.3 O que os testes cobrem
+### 6.3 Rodar o experimento
+
+O experimento é o notebook `experimento/a_vida_do_sbsj.ipynb`. Ele é gerado por `montar_notebook.py` (para o texto e o código ficarem revisáveis no git) e já vem executado, com as saídas da execução oficial.
+
+```sh
+cd experimento
+python3 montar_notebook.py               # só se mudar alguma célula
+jupyter lab a_vida_do_sbsj.ipynb         # e "Run All"
+# ou, sem interface:
+python3 -c "import nbformat; from nbclient import NotebookClient as C; nb = nbformat.read('a_vida_do_sbsj.ipynb', 4); C(nb, timeout=3600).execute(); nbformat.write(nb, 'a_vida_do_sbsj.ipynb')"
+```
+
+O epílogo (escala) leva alguns minutos; `TG_PULAR_ESCALA=1` pula e marca H4 como não executada. Precisa de `nbformat`, `nbclient`, `ipykernel` e `matplotlib`, além do `requirements.txt`.
+
+Cada execução:
+
+- confere o hash do protocolo contra o commit de congelamento `fcfb6a5` e para se não bater;
+- roda os testes do artefato;
+- cria um banco só dela (`tg_exp_<exec_id>`), que não é apagado: dá para auditar qualquer execução depois;
+- acrescenta em `resultados/execucoes.jsonl` cada verificação (observado, predito, tolerância, veredito) e cada escrita no ledger;
+- grava `resultados/<exec_id>/vereditos.json` e as figuras.
+
+O registro nunca é reescrito. Uma falha corrigida continua visível na execução em que aconteceu, como a regra do protocolo exige.
+
+### 6.4 O que os testes cobrem
 
 Todos usam um aeródromo fictício (perto de 10°S 50°W, `tests/cenario_sintetico.py`). Nenhum usa dado do SBSJ, nenhum executa uma verificação do protocolo.
 
