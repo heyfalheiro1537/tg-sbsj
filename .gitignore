@@ -1,2 +1,4 @@
 __pycache__/
 *.png
+.pgdata/
+.pytest_cache/

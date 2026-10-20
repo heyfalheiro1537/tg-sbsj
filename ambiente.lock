@@ -1,0 +1,16 @@
+# Ambiente em que o artefato foi desenvolvido e testado (20/10/2026).
+# Registrado depois do congelamento do protocolo e antes de qualquer execução
+# do experimento. As versões não entram em nenhuma predição; servem para
+# reproduzir os números.
+
+python: 3.13.16
+postgresql: 16.15 (local, sem PostGIS); Docker: postgis/postgis:16-3.4
+proj: 9.8.1
+psycopg: 3.3.6
+pyproj: 3.8.0
+shapely: 2.2.0
+numpy: 2.5.3
+PyYAML: 6.0.3
+pymupdf: 2.0
+pytest: 9.1.1
+semente_sintetica: 20261020     # protocolo, ambiente.semente_sintetica
