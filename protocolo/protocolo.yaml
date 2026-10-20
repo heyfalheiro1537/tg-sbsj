@@ -7,7 +7,9 @@
 
 protocolo:
   versao: "0.4"
-  estado: pronto_para_congelar            # passa a "congelado" quando os bloqueios abaixo caírem
+  estado: congelado
+  data_congelamento: 2026-10-20
+  ancora: "tag git protocolo-v0.4 em github.com/heyfalheiro1537/tg-sbsj"            # passa a "congelado" quando os bloqueios abaixo caírem
   historico:
     - {versao: "0.1", sha256: 17625641524769a5b2ede2d644b148510089e4c8961df52a7e20580306e32689, conteudo: "H2"}
     - {versao: "0.2", conteudo: "H1, H3 e H4 acrescentadas; caused_by no envelope"}
