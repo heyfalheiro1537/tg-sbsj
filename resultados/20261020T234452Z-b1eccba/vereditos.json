@@ -1,0 +1,440 @@
+[
+ {
+  "id": "P0",
+  "hipotese": "roteiro",
+  "observado": "\u001b[32m\u001b[32m\u001b[1m39 passed\u001b[0m\u001b[32m in 3.04s\u001b[0m\u001b[0m",
+  "predito": "os testes de verificação do artefato passam",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "R1.1",
+  "hipotese": "roteiro",
+  "observado": "12 campos em ['distancias', 'faixa', 'pista', 'swy']",
+  "predito": "12 campos, em 4 grandezas (pista, SWY, faixa, distâncias declaradas)",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "R1.2",
+  "hipotese": "roteiro",
+  "observado": "caused_by = None; reason = 'ADC AIRAC AMDT 2604A1'",
+  "predito": "nenhuma alteração traz a causa (só a edição que a publicou)",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "H2.01",
+  "hipotese": "H2",
+  "observado": 2675.342380133518,
+  "predito": 2675,
+  "tolerancia": 0.919,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.3424"
+ },
+ {
+  "id": "H2.02",
+  "hipotese": "H2",
+  "observado": 134.93456677675383,
+  "predito": 134.93,
+  "tolerancia": 0.014,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.0046"
+ },
+ {
+  "id": "H2.03",
+  "hipotese": "H2",
+  "observado": 314.9272682936651,
+  "predito": 314.92,
+  "tolerancia": 0.014,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.0073"
+ },
+ {
+  "id": "H2.04",
+  "hipotese": "H2",
+  "observado": 156.93456677675383,
+  "predito": 157,
+  "tolerancia": 1.009,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.0654"
+ },
+ {
+  "id": "H2.05",
+  "hipotese": "H2",
+  "observado": 336.9272682936651,
+  "predito": 337,
+  "tolerancia": 1.009,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.0727"
+ },
+ {
+  "id": "H2.06",
+  "hipotese": "H2",
+  "observado": 2675.342380133519,
+  "predito": 2675,
+  "tolerancia": 0.919,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.3424"
+ },
+ {
+  "id": "H2.07",
+  "hipotese": "H2",
+  "observado": 2675.342380133519,
+  "predito": 2675,
+  "tolerancia": 0.919,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.3424"
+ },
+ {
+  "id": "H2.08",
+  "hipotese": "H2",
+  "observado": 2958.3423801336166,
+  "predito": 2958,
+  "tolerancia": 1.419,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.3424"
+ },
+ {
+  "id": "H2.09",
+  "hipotese": "H2",
+  "observado": 2675.342380133519,
+  "predito": 2675,
+  "tolerancia": 0.919,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.3424"
+ },
+ {
+  "id": "H2.10",
+  "hipotese": "H2",
+  "observado": 2675.342380133519,
+  "predito": 2675,
+  "tolerancia": 0.919,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.3424"
+ },
+ {
+  "id": "H2.11",
+  "hipotese": "H2",
+  "observado": 2675.342380133519,
+  "predito": 2675,
+  "tolerancia": 0.919,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.3424"
+ },
+ {
+  "id": "H2.12",
+  "hipotese": "H2",
+  "observado": 2675.342380133519,
+  "predito": 2675,
+  "tolerancia": 0.919,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.3424"
+ },
+ {
+  "id": "H2.13",
+  "hipotese": "H2",
+  "observado": 2675.342380133519,
+  "predito": 2675,
+  "tolerancia": 0.919,
+  "veredito": "PASSOU",
+  "nota": "|Δ| = 0.3424"
+ },
+ {
+  "id": "H2.14",
+  "hipotese": "H2",
+  "observado": 0,
+  "predito": 0,
+  "tolerancia": 0,
+  "veredito": "PASSOU",
+  "nota": "linhas de derivado no ledger do modelo"
+ },
+ {
+  "id": "H1.01",
+  "hipotese": "H1",
+  "observado": 1.126983783068592e-08,
+  "predito": "≤ 1e-06",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "pior unidade: 891.0"
+ },
+ {
+  "id": "H1.02",
+  "hipotese": "H1",
+  "observado": 7.546077931880863,
+  "predito": "≤ 1.77",
+  "tolerancia": null,
+  "veredito": "FALHOU",
+  "nota": "pior unidade: 904.0 (pavimento sem designação (área de teste de motores e acessos))"
+ },
+ {
+  "id": "H1.03",
+  "hipotese": "H1",
+  "observado": 0,
+  "predito": 0,
+  "tolerancia": 0,
+  "veredito": "PASSOU",
+  "nota": "unidades com mais primitivos que trechos"
+ },
+ {
+  "id": "H1.04",
+  "hipotese": "H1",
+  "veredito": "NÃO EXECUTADA",
+  "nota": "nenhuma unidade precisou de coroa; o ajuste fechou só com retângulos"
+ },
+ {
+  "id": "H1.05",
+  "hipotese": "H1",
+  "observado": 63.047136464093754,
+  "predito": "≤ 1.95",
+  "tolerancia": null,
+  "veredito": "FALHOU",
+  "nota": "RWY 63.05 m; SWY 4.97 m"
+ },
+ {
+  "id": "R12",
+  "hipotese": "roteiro",
+  "veredito": "NÃO EXECUTADA",
+  "nota": "a regra de distâncias declaradas com barreira ainda não está no protocolo (entra na v0.5)"
+ },
+ {
+  "id": "R10.1",
+  "hipotese": "roteiro",
+  "observado": "em 08/03/2027: sim",
+  "predito": "o ADC dentro de [t₄, t₅) mostra a interdição",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "R10.2",
+  "hipotese": "roteiro",
+  "observado": "1 s antes de t₄: False; em t₅: False",
+  "predito": "o ADC fora de [t₄, t₅) não mostra",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "R10.3",
+  "hipotese": "roteiro",
+  "observado": "[('2027-03-01', 'BASELINE', 1), ('2027-03-15', 'VOID', 1)]",
+  "predito": "a segmentação do ciclo de vida devolve exatamente [t₄, t₅)",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "H2.15",
+  "hipotese": "H2",
+  "observado": [
+   [
+    "SBSJ",
+    "airport",
+    "DELTA",
+    [
+     "referencial.ref_id"
+    ]
+   ]
+  ],
+  "predito": [
+   [
+    "SBSJ",
+    "airport",
+    "DELTA",
+    [
+     "referencial.ref_id"
+    ]
+   ]
+  ],
+  "tolerancia": 0,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "H2.16",
+  "hipotese": "H2",
+  "observado": 0,
+  "predito": 0,
+  "tolerancia": 0,
+  "veredito": "PASSOU",
+  "nota": "eventos em features com seed no ato 4"
+ },
+ {
+  "id": "H2.17",
+  "hipotese": "H2",
+  "observado": 0,
+  "predito": 0,
+  "tolerancia": 0,
+  "veredito": "PASSOU",
+  "nota": "paths de comprimento ou distância declarada escritos no ato 4"
+ },
+ {
+  "id": "H2.18",
+  "hipotese": "H2",
+  "observado": 3.2924053527386444e-09,
+  "predito": "≤ 0.0005",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "maior distância motor × gabarito, com ref v1 e v2"
+ },
+ {
+  "id": "H2.19",
+  "hipotese": "H2",
+  "observado": "ΔL = 8.2e-08 m; Δaz = 9.5e-11°",
+  "predito": "ΔL ≤ 5e-4 m; Δaz ≤ 1.1e-05°",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "comprimento novo 2676.195 m (antes 2675.342 m)"
+ },
+ {
+  "id": "R8.1",
+  "hipotese": "roteiro",
+  "observado": "em t: e66f79e71386… (v1); agora: fd72a389f5a4… (v2)",
+  "predito": "o ADC em t usa o referencial vigente em t (v1), não o atual (v2)",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "R8.2",
+  "hipotese": "roteiro",
+  "observado": "operador SBSJ · interdição temporária: obra no pavimento da TWY E (simulada) · sobre SBSJ-PAV-890.0 · regra: Anexo 14 Vol. I e RBAC 154: TORA = pista; TODA = TORA + CWY; ASDA = TORA + SWY; LDA = pista − deslocamento da cabeceira",
+  "predito": "o envelope diz quem afirmou a interdição, por quê e sobre o quê; a norma em t diz a regra",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "R8.3",
+  "hipotese": "roteiro",
+  "observado": "16: LDA 2675.342 · 34: LDA 2675.342",
+  "predito": "as distâncias re-derivadas das premissas retidas são as que valiam em t",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "H3.01",
+  "hipotese": "H3",
+  "observado": "verify_chain ['k']; âncora detecta",
+  "predito": "verify_chain ['k']; âncora detecta",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "UPDATE em event_field.next do evento k, sem recalcular hash"
+ },
+ {
+  "id": "H3.02",
+  "hipotese": "H3",
+  "observado": "verify_chain ['k+1']; âncora detecta",
+  "predito": "verify_chain ['k+1']; âncora detecta",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "UPDATE no corpo de k recalculando o hash de k"
+ },
+ {
+  "id": "H3.03",
+  "hipotese": "H3",
+  "observado": "verify_chain ['k']; âncora detecta",
+  "predito": "verify_chain ['k']; âncora detecta",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "UPDATE em asserted_by de k, sem recalcular hash"
+ },
+ {
+  "id": "H3.04",
+  "hipotese": "H3",
+  "observado": "verify_chain ['k']; âncora detecta",
+  "predito": "verify_chain ['k']; âncora detecta",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "DELETE de uma linha de event_field de k"
+ },
+ {
+  "id": "H3.05",
+  "hipotese": "H3",
+  "observado": "verify_chain ['k+1']; âncora detecta",
+  "predito": "verify_chain ['k+1']; âncora detecta",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "DELETE do evento k"
+ },
+ {
+  "id": "H3.06",
+  "hipotese": "H3",
+  "observado": "verify_chain ['k+1']; âncora detecta",
+  "predito": "verify_chain ['k+1']; âncora detecta",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "INSERT entre k e k+1 com hash próprio correto e prev_hash = hash(k)"
+ },
+ {
+  "id": "H3.07",
+  "hipotese": "H3",
+  "observado": "verify_chain []; âncora detecta",
+  "predito": "verify_chain []; âncora detecta",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "UPDATE no corpo da cabeça recalculando o hash da cabeça"
+ },
+ {
+  "id": "H3.08",
+  "hipotese": "H3",
+  "observado": "verify_chain []; âncora detecta",
+  "predito": "verify_chain []; âncora detecta",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "DELETE da cabeça (truncamento)"
+ },
+ {
+  "id": "H3.09",
+  "hipotese": "H3",
+  "observado": "verify_chain []; âncora detecta",
+  "predito": "verify_chain []; âncora detecta",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": "reescrita de k até a cabeça recalculando todos os hashes"
+ },
+ {
+  "id": "H3.10",
+  "hipotese": "H3",
+  "observado": "34 eventos no banco; 34 escritas no registro; verify_chain []",
+  "predito": "iguais; verify_chain []",
+  "tolerancia": null,
+  "veredito": "PASSOU",
+  "nota": null
+ },
+ {
+  "id": "H4.01",
+  "hipotese": "H4",
+  "veredito": "NÃO EXECUTADA",
+  "nota": "escala pulada nesta execução (TG_PULAR_ESCALA)"
+ },
+ {
+  "id": "H4.02",
+  "hipotese": "H4",
+  "veredito": "NÃO EXECUTADA",
+  "nota": "escala pulada nesta execução (TG_PULAR_ESCALA)"
+ },
+ {
+  "id": "H4.03",
+  "hipotese": "H4",
+  "veredito": "NÃO EXECUTADA",
+  "nota": "escala pulada nesta execução (TG_PULAR_ESCALA)"
+ },
+ {
+  "id": "H4.04",
+  "hipotese": "H4",
+  "veredito": "NÃO EXECUTADA",
+  "nota": "escala pulada nesta execução (TG_PULAR_ESCALA)"
+ },
+ {
+  "id": "H4.05",
+  "hipotese": "H4",
+  "veredito": "NÃO EXECUTADA",
+  "nota": "escala pulada nesta execução (TG_PULAR_ESCALA)"
+ }
+]

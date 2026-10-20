@@ -202,8 +202,17 @@ class Resolvedor:
         return lat2, lon2, az_p
 
     def seed(self, seed: dict):
-        """(lat, lon, azimute do eixo no ponto, no sentido de s)."""
-        elemento, ref = seed["elemento"], seed["referente"]
+        """(lat, lon, azimute do eixo no ponto, no sentido de s).
+
+        Seed sem elemento é a posição do próprio referente (um nó): sem eixo não
+        há direção, então s e o precisam ser zero (regra 3).
+        """
+        elemento, ref = seed.get("elemento"), seed["referente"]
+        if elemento is None:
+            if float(seed.get("s") or 0) != 0 or float(seed.get("o") or 0) != 0:
+                raise ReferencialError("seed sem elemento não pode andar: um ponto sozinho não define direção (regra 3)")
+            lat, lon = self.referente(ref)
+            return lat, lon, None
         de = self.sentido(elemento, ref)
         if ref == de:
             lat, lon = self.referente(ref)
@@ -211,6 +220,39 @@ class Resolvedor:
         else:
             lat, lon, az = self._ponto_e_azimute(ref)
         return self._andar(lat, lon, az, float(seed["s"]), float(seed["o"]))
+
+    def inverso(self, elemento, referente, lat, lon, tol=1e-8, max_iter=30):
+        """(s, o) tais que seed(elemento, referente, s, o) cai em (lat, lon).
+
+        Newton sobre a própria função de resolução, até 1e-8 m: a seed gerada
+        reproduz o ponto exatamente, o que mantém a envoltória conservadora
+        depois da ida e volta pelo ledger.
+        """
+        alvo_lon, alvo_lat = lon, lat
+        p0 = self.referente(referente) if referente in self.pontas(elemento) else self._ponto_e_azimute(referente)[:2]
+        az = self.azimute(elemento, self.sentido(elemento, referente)) if referente in self.pontas(elemento) \
+            else self._ponto_e_azimute(referente)[2]
+        az12, _, d = GEOD.inv(p0[1], p0[0], alvo_lon, alvo_lat)
+        from math import cos, radians, sin
+        s = d * cos(radians(az12 - az))
+        o = d * sin(radians(az12 - az))
+
+        def erro(s_, o_):
+            la, lo, _ = self.seed({"elemento": elemento, "referente": referente, "s": s_, "o": o_})
+            azv, _, dv = GEOD.inv(alvo_lon, alvo_lat, lo, la)
+            return dv * sin(radians(azv)), dv * cos(radians(azv))      # (leste, norte) do resolvido − alvo
+        for _ in range(max_iter):
+            ex, ey = erro(s, o)
+            if (ex * ex + ey * ey) ** 0.5 < tol:
+                return s, o
+            h = 1e-3
+            ax, ay = erro(s + h, o); bx, by = erro(s, o + h)
+            j11, j21 = (ax - ex) / h, (ay - ey) / h
+            j12, j22 = (bx - ex) / h, (by - ey) / h
+            det = j11 * j22 - j12 * j21
+            s -= (j22 * ex - j12 * ey) / det
+            o -= (-j21 * ex + j11 * ey) / det
+        raise ReferencialError("inversa da seed não convergiu")
 
 
 # ---------------------------------------------------------------- integração com o ledger
@@ -230,8 +272,7 @@ def referencial_vigente(conn, run_id, t, cur=None):
     fechar = cur is None
     cur = cur or conn.cursor()
     try:
-        cur.execute("""SELECT DISTINCT feature_id FROM event
-                       WHERE run_id = %s AND feature_type = 'airport' AND event_id <= %s""", (run_id, t))
+        cur.execute("SELECT feature_id FROM features_de_tipo(%s, 'airport')", (run_id,))
         aeros = [r[0] for r in cur.fetchall()]
         vivos = []
         for a in aeros:
@@ -242,7 +283,8 @@ def referencial_vigente(conn, run_id, t, cur=None):
             return None, None
         if len(vivos) > 1:
             raise ReferencialError("mais de um airport vivo no mesmo run")
-        cur.execute("SELECT valor FROM estado_em(%s, %s, %s) WHERE path = 'referencial.ref_id'", (run_id, vivos[0], t))
+        cur.execute("SELECT valor FROM estado_em(%s, %s, %s, 'referencial.') WHERE path = 'referencial.ref_id'",
+                    (run_id, vivos[0], t))
         r = cur.fetchone()
         if r is None:
             return None, None
@@ -257,10 +299,13 @@ def referencial_vigente(conn, run_id, t, cur=None):
 
 def _checar_seeds(res: Resolvedor, plano: dict, quem: str):
     for base, s in seeds_do_estado(plano).items():
-        if s["elemento"] is None or s["s"] is None or s["o"] is None:
+        if s["s"] is None or s["o"] is None:
             raise ReferencialError(f"{quem}: seed incompleta em {base}")
         try:
-            res.sentido(s["elemento"], s["referente"])
+            if s["elemento"] is None:
+                res.seed(s)                     # nó: só o referente, sem andar
+            else:
+                res.sentido(s["elemento"], s["referente"])
         except ReferencialError as e:
             raise ReferencialError(f"{quem}: seed em {base} aponta para referente ou elemento inexistente ({e})")
 

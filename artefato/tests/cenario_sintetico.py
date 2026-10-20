@@ -46,13 +46,13 @@ def montar(conn, com_swy=True):
                                "norma": {"variacao_magnetica_graus": -20}})
     relogio.avancar(conn, run, dias=1)
     ledger.append_event(conn, run, "XXXX-RWY", "runway", "BASELINE", asserted_by="teste",
-                        corpo={"direcoes": {"inicio": "05", "fim": "23"},
+                        corpo={"adc": {"designacao": "05/23", "direcoes": {"inicio": "05", "fim": "23"}},
                                "geometria": {"primitivos": {"pista": {
                                    "tipo": "retangulo", "inicio": seed("THR_A"), "fim": seed("THR_B"),
                                    "largura": 45}}}})
     if com_swy:
         ledger.append_event(conn, run, "XXXX-SWY", "protect_area", "BASELINE", asserted_by="teste",
-                            corpo={"papel": "swy", "aplica_a": {"pista": "XXXX-RWY", "direcao": "05"},
+                            corpo={"adc": {"papel": "swy", "aplica_a": {"pista": "XXXX-RWY", "direcao": "05"}},
                                    "geometria": {"primitivos": {"swy": {
                                        "tipo": "retangulo", "inicio": seed("THR_B"), "fim": seed("THR_B", s=-200),
                                        "largura": 45}}}})

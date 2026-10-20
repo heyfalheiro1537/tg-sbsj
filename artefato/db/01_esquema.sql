@@ -59,6 +59,10 @@ CREATE TABLE IF NOT EXISTS event_field (
 CREATE INDEX IF NOT EXISTS event_feature_idx   ON event (run_id, feature_id, event_id);
 CREATE INDEX IF NOT EXISTS event_type_idx      ON event (run_id, feature_type, event_id);
 CREATE INDEX IF NOT EXISTS event_owner_idx     ON event (owner_ref) WHERE owner_ref IS NOT NULL;
+-- ciclo de vida: achar o último BASELINE/VOID sem passar pelos DELTAs (H4, série S2)
+CREATE INDEX IF NOT EXISTS event_ciclo_idx     ON event (run_id, feature_id, event_id) WHERE event_type IN ('BASELINE', 'VOID');
+-- features de um tipo por varredura saltada do índice, sem ler todos os eventos (H4)
+CREATE INDEX IF NOT EXISTS event_tipo_feature_idx ON event (run_id, feature_type, feature_id);
 -- reconstrução por feature e por camada (prefixo do path): H4, série S2
 CREATE INDEX IF NOT EXISTS field_feature_path_idx ON event_field (run_id, feature_id, path, event_id DESC);
 

@@ -83,3 +83,30 @@ LANGUAGE sql STABLE AS $$
     WHERE t.prev_hash IS DISTINCT FROM t.anterior
     ORDER BY t.event_id
 $$;
+
+-- Features de um tipo (varredura saltada: custo proporcional ao nº de features, não de eventos).
+CREATE OR REPLACE FUNCTION features_de_tipo(p_run TEXT, p_tipo TEXT) RETURNS TABLE (feature_id TEXT)
+LANGUAGE sql STABLE AS $$
+    WITH RECURSIVE f(fid) AS (
+        (SELECT e.feature_id FROM event e WHERE e.run_id = p_run AND e.feature_type = p_tipo
+         ORDER BY e.feature_id LIMIT 1)
+        UNION ALL
+        SELECT (SELECT e.feature_id FROM event e WHERE e.run_id = p_run AND e.feature_type = p_tipo
+                AND e.feature_id > f.fid ORDER BY e.feature_id LIMIT 1)
+        FROM f WHERE f.fid IS NOT NULL
+    )
+    SELECT fid FROM f WHERE fid IS NOT NULL
+$$;
+
+-- Tipos presentes num run (mesma varredura saltada).
+CREATE OR REPLACE FUNCTION tipos_do_run(p_run TEXT) RETURNS TABLE (feature_type TEXT)
+LANGUAGE sql STABLE AS $$
+    WITH RECURSIVE t(tipo) AS (
+        (SELECT e.feature_type FROM event e WHERE e.run_id = p_run ORDER BY e.feature_type LIMIT 1)
+        UNION ALL
+        SELECT (SELECT e.feature_type FROM event e WHERE e.run_id = p_run AND e.feature_type > t.tipo
+                ORDER BY e.feature_type LIMIT 1)
+        FROM t WHERE t.tipo IS NOT NULL
+    )
+    SELECT tipo FROM t WHERE tipo IS NOT NULL
+$$;

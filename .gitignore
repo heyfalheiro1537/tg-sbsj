@@ -2,3 +2,5 @@ __pycache__/
 *.png
 .pgdata/
 .pytest_cache/
+experimento/.ipynb_checkpoints/
+!resultados/**/*.png

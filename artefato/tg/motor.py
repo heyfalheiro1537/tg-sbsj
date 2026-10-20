@@ -50,6 +50,30 @@ class PlanoLocal:
         d = (x - self.o[0], y - self.o[1], z - self.o[2])
         return (sum(a * b for a, b in zip(self.r[0], d)), sum(a * b for a, b in zip(self.r[1], d)))
 
+    def geo(self, e, n, tol=1e-8):
+        """Inversa de enu: (leste, norte) → (lat, lon), por Newton até 1e-8 m.
+
+        1e-8 m é o limite numérico das coordenadas ECEF (~6e6 m) em float64.
+        """
+        from pyproj import Geod
+        g = Geod(ellps="GRS80")
+        dist = (e * e + n * n) ** 0.5
+        az = (90 - __import__("math").degrees(atan2(n, e))) % 360
+        lon, lat, _ = g.fwd(self.lon0, self.lat0, az, dist)
+        for _ in range(30):
+            ex, ny = self.enu(lat, lon)
+            de, dn = e - ex, n - ny
+            if (de * de + dn * dn) ** 0.5 < tol:
+                return lat, lon
+            h = 1e-7
+            a1 = self.enu(lat + h, lon); a2 = self.enu(lat, lon + h)
+            j11, j21 = (a1[0] - ex) / h, (a1[1] - ny) / h
+            j12, j22 = (a2[0] - ex) / h, (a2[1] - ny) / h
+            det = j11 * j22 - j12 * j21
+            lat += (j22 * de - j12 * dn) / det
+            lon += (-j21 * de + j11 * dn) / det
+        raise ValueError("inversa do plano local não convergiu")
+
     def az_enu(self, az):
         """Vetor unitário (leste, norte) de um azimute verdadeiro."""
         return sin(radians(az)), cos(radians(az))

@@ -263,19 +263,26 @@ def gravar_snapshot(conn, run_id, feature_id, t=None):
     return ate
 
 
-def features(conn, run_id, t=None, feature_type=None):
-    """Features vivas em t (opcionalmente de um tipo)."""
+def features(conn, run_id, t=None, feature_type=None, tipos=None):
+    """Features vivas em t, como [(feature_id, feature_type)].
+
+    Lê por varredura saltada do índice (custo pelo nº de features, não de
+    eventos), o que mantém a leitura independente do tamanho do histórico.
+    """
     t = _limite(conn, run_id, t)
+    if feature_type is not None:
+        tipos = [feature_type]
     with conn.cursor() as cur:
-        cur.execute("""SELECT DISTINCT feature_id, feature_type FROM event
-                       WHERE run_id = %s AND event_id <= %s AND (%s::text IS NULL OR feature_type = %s)""",
-                    (run_id, t, feature_type, feature_type))
-        cand = cur.fetchall()
+        if tipos is None:
+            cur.execute("SELECT feature_type FROM tipos_do_run(%s)", (run_id,))
+            tipos = [r[0] for r in cur.fetchall()]
         vivas = []
-        for fid, ftype in cand:
-            cur.execute("SELECT viva_em(%s, %s, %s)", (run_id, fid, t))
-            if cur.fetchone()[0]:
-                vivas.append((fid, ftype))
+        for tp in tipos:
+            cur.execute("SELECT feature_id FROM features_de_tipo(%s, %s)", (run_id, tp))
+            for (fid,) in cur.fetchall():
+                cur.execute("SELECT viva_em(%s, %s, %s)", (run_id, fid, t))
+                if cur.fetchone()[0]:
+                    vivas.append((fid, tp))
     return sorted(vivas)
 
 

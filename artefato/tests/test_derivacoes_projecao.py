@@ -44,9 +44,9 @@ def test_cache_de_projecao(conn):
     _, i3 = projecao.projetar(conn, run, tipos=tipos)
     assert i3["cache"] == "hit" and i3["hwm"] == i1["hwm"]
     # evento dentro da seleção derruba
-    ledger.append_event(conn, run, "XXXX-RWY", "runway", "DELTA", asserted_by="t", alteracoes={"superficie": "asfalto"})
+    ledger.append_event(conn, run, "XXXX-RWY", "runway", "DELTA", asserted_by="t", alteracoes={"adc.superficie": "asfalto"})
     c4, i4 = projecao.projetar(conn, run, tipos=tipos)
-    assert i4["cache"] == "miss" and c4["XXXX-RWY"]["estado"]["superficie"] == "asfalto"
+    assert i4["cache"] == "miss" and c4["XXXX-RWY"]["estado"]["adc"]["superficie"] == "asfalto"
     fresco, _ = projecao.projetar(conn, run, tipos=tipos, usar_cache=False)
     assert fresco == c4
 
