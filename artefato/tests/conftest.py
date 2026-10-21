@@ -1,6 +1,6 @@
 """Cada teste roda num banco novo, clonado de um modelo com o esquema carregado.
 
-Precisa de um PostgreSQL acessível em TG_DSN_ADMIN (padrão: o servidor local de
+Precisa de um PostgreSQL acessível em AEROLEDGER_DSN_ADMIN (padrão: o servidor local de
 scripts/pg_local.sh). Os testes usam só o aeródromo fictício de
 cenario_sintetico.py: nenhum dado do SBSJ, nenhuma verificação do protocolo.
 """
@@ -12,13 +12,11 @@ from pathlib import Path
 import psycopg
 import pytest
 
-RAIZ = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(RAIZ))
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent))   # cenario_sintetico
 
-from tg import banco  # noqa: E402
+from aeroledger import banco  # noqa: E402
 
-ADMIN = os.environ.get("TG_DSN_ADMIN", "postgresql://tg@localhost:54329/postgres")
+ADMIN = os.environ.get("AEROLEDGER_DSN_ADMIN") or os.environ.get("TG_DSN_ADMIN", "postgresql://tg@localhost:54329/postgres")
 MODELO = "tg_modelo_testes"
 
 

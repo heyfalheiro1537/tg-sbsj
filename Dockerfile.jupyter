@@ -1,9 +1,9 @@
 FROM python:3.13-slim
 
 WORKDIR /tg
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt jupyterlab==4.4.*
+COPY artefato /tg/artefato
+COPY requirements.txt /tg/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt jupyterlab==4.4.*
 
-ENV PYTHONPATH=/tg/artefato
 EXPOSE 8888
 CMD ["jupyter", "lab", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--IdentityProvider.token=", "--ServerApp.root_dir=/tg"]

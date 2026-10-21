@@ -1,0 +1,140 @@
+# Protocolo de falseamento do TG — SBSJ — versão 0.5 (RASCUNHO)
+#
+# A v0.4 (protocolo/protocolo.yaml, commit fcfb6a5) continua congelada e não
+# muda. Esta versão substitui o roteiro de sete atos por cinco experimentos
+# curtos, e só passa a valer quando for congelada: hash registrado e commit
+# enviado ao GitHub ANTES da primeira execução sobre o SBSJ.
+
+protocolo:
+  versao: "0.5"
+  estado: rascunho
+  substitui: {versao: "0.4", commit: fcfb6a5, sha256: dd453c3404ccda5836f8dd81744a613f9dd4f4cb525d7b4f82310440ea38ad9f}
+  motivo_da_mudanca: >-
+    Reenquadramento da pergunta de pesquisa (21/10/2026), de "o modelo
+    paramétrico é possível" para "é possível tornar dados aeroportuários
+    geolocalizados auditáveis e seguros, na ótica do PANS-AIM, e consistentes
+    entre produtos". A contribuição passa a ser a arquitetura de grafo baseada
+    em event sourcing; o motor de geometria passa a demonstração.
+  o_que_acontece_com_a_v04: >-
+    Os resultados da execução 20261020T234807Z-ebc7ee7 continuam válidos e
+    reportados, inclusive as falhas: H1.02 e H1.05 falharam; H1.04, R12 e H4
+    não foram executadas. H1 sai do escopo testado por decisão registrada aqui,
+    não por ter falhado: o ajuste de formas ao desenho mede a carta mais do que
+    o modelo, e não responde à nova pergunta.
+  autor: Heyder
+  data_rascunho: 2026-10-21
+
+pergunta: >-
+  É possível tornar dados aeroportuários geolocalizados auditáveis — cada valor
+  atribuível, retido, re-derivável e com adulteração evidente —, e quais são os
+  limites dessa garantia?
+
+regras_gerais:
+  tolerancia: "nunca escolhida; as numéricas vêm da v0.4 (precisão de publicação e exatidão do gabarito)"
+  veredito: "PASSOU se o observado cumpre a predição; FALHOU caso contrário."
+  classificacao_de_falha: >-
+    implementação (corrigível sem violar princípio), oráculo (a fonte oficial é
+    que diverge) ou arquitetura (a correção exigiria violar um princípio).
+  independencia_do_oraculo: >-
+    premissas do AD 2.12; derivados comparados ao AD 2.12/2.13; gabarito
+    geodésico em outro código (protocolo/gabarito); verificador do E5 sem
+    importar a biblioteca.
+
+fontes: "as mesmas da v0.4 (F1 ADC 2604, F2 AOC 2213, F3 AD 2.12, F4 AD 2.13)"
+
+limites_declarados:          # adversários que o experimento não testa, com o motivo
+  A4_repudio: >-
+    asserted_by é texto, não assinatura: o ledger registra quem afirmou, mas não
+    prova. Assinatura digital por evento (PANS-AIM 2.2.1) fica como trabalho futuro.
+  A5_fonte_errada: >-
+    nenhum sistema de dados torna uma medição verdadeira; o ledger só a atribui.
+    Exemplos reais no E1 (edições que divergem) e nos achados da v0.4 (SWY
+    desenhada ~5 m fora no ADC).
+  interoperabilidade_entre_organizacoes: >-
+    o E5 mostra as condições (produtos consistentes por construção e prova
+    verificável por terceiros), não dois sistemas de organizações diferentes.
+
+# ---------------------------------------------------------------------------
+experimentos:
+
+  E1:
+    pergunta: "Qual é o problema?"
+    run: aixm
+    cenario: >-
+      A pista registrada em modo forma, como o AIXM faria: BASELINE com os
+      números da AOC 2213 e DELTA com os do ADC 2604, ambos afirmados pelo DECEA.
+    verificacoes:
+      - {id: E1.1, predicao: "o diff entre as edições tem 12 campos em 4 grandezas (pista, SWY, faixa, distâncias declaradas)", origem: "R1 da v0.4"}
+      - {id: E1.2, predicao: "nenhuma alteração traz a causa (caused_by vazio; só a edição que a publicou)", origem: "R1 da v0.4"}
+
+  E2:
+    pergunta: "O número se refaz a partir das premissas?"
+    run: sbsj
+    cenario: >-
+      Fundação: referencial com THR16 e THR34 do AD 2.12, airport, pista,
+      cabeceiras e SWY como seeds na forma B. Depois, a THR34 é remedida
+      (cenário da v0.4, ato 4) com um levantamento registrado como evento e a
+      troca de referencial apontando para ele em caused_by.
+    verificacoes:
+      - "H2.01 a H2.14 da v0.4, sem alteração (predições e tolerâncias)"
+      - "H2.15 a H2.19 da v0.4, sem alteração, sobre a remedição"
+    ajuste_em_relacao_a_v04:
+      H2.15: >-
+        a remedição passa a ter dois eventos: o levantamento (feature 'survey',
+        sem seed) e o DELTA no airport com caused_by = levantamento. A predição
+        vira: o único path alterado em features existentes é referencial.ref_id,
+        e o DELTA aponta para o levantamento.
+      H2.18_H2.19: "resolução de seed pelo Resolvedor da biblioteca (o motor de geometria saiu do escopo)"
+
+  E3:
+    pergunta: "Como estava em t, quem afirmou e por quê?"
+    run: sbsj
+    cenario: >-
+      Instantes: t_a ao fim da fundação (antes da remedição) e t_b depois. Uma
+      interdição temporária de um trecho da pista (restriction com owner_ref =
+      pista) entra em t4 e sai em t5 (BASELINE e VOID, sem TEMPDELTA).
+    verificacoes:
+      - {id: E3.1, predicao: "em t_a o referencial vigente é o v1 e o comprimento derivado é o de H2.01; em t_b, o v2 e o de H2.19"}
+      - {id: E3.2, predicao: "a interdição aparece em qualquer t de [t4, t5) e não aparece fora"}
+      - {id: E3.3, predicao: "a segmentação do ciclo de vida da interdição devolve exatamente [BASELINE em t4, VOID em t5], ciclo 1"}
+      - {id: E3.4, predicao: "o envelope da troca de referencial dá autor, motivo e causa (o levantamento), e o do levantamento dá o seu autor"}
+      - {id: E3.5, predicao: "as distâncias declaradas re-derivadas em t_a são iguais às de t_a calculadas no próprio E2, ao último bit"}
+
+  E4:
+    pergunta: "Alguém consegue adulterar sem ser visto? (PANS-AIM 2.2)"
+    run: sbsj
+    execucao: "cada ataque numa cópia do banco feita ao fim do E3; o original não é tocado; âncora = cabeça registrada fora do banco antes dos ataques"
+    regra_do_k: "a da v0.4 (ataques.escolher_k)"
+    verificacoes:
+      - {id: E4.1, ataque: "H3.01 — alterar o corpo do evento k sem recalcular hash", verify_chain: "detecta, devolve k",   com_ancora: detecta}
+      - {id: E4.2, ataque: "H3.05 — apagar o evento k",                            verify_chain: "detecta, devolve k+1", com_ancora: detecta}
+      - {id: E4.3, ataque: "H3.06 — inserir um evento entre k e k+1, com hash próprio correto", verify_chain: "detecta, devolve k+1", com_ancora: detecta}
+      - {id: E4.4, ataque: "H3.09 — reescrever de k até a cabeça recalculando todos os hashes", verify_chain: "não detecta", com_ancora: detecta}
+    leitura: "E4.4 é a predição negativa: quem controla o banco inteiro só é pego com âncora externa."
+
+  E5:
+    pergunta: "Dois produtos do mesmo ledger podem divergir? A prova é verificável por terceiros? (PANS-AIM 2.1.3.2)"
+    run: sbsj
+    produtos:
+      P1: "tabela AD 2.12/2.13: comprimento, azimutes verdadeiros, rumos magnéticos e TORA/TODA/ASDA/LDA"
+      P2: "conteúdo do ADC: tabela de distâncias da lente ADC e comprimento do eixo da pista entre as cabeceiras resolvidas"
+    verificador_independente: >-
+      experimento/verificador_independente.py: lê os eventos exportados em JSON,
+      reimplementa JCS (RFC 8785) e SHA-256 a partir da especificação, confere a
+      cadeia e recalcula o comprimento com o gabarito geodésico. Não importa a
+      biblioteca aeroledger.
+    verificacoes:
+      - {id: E5.1, predicao: "em t_a e em t_b, P1 e P2 dão as mesmas distâncias declaradas, ao último bit"}
+      - {id: E5.2, predicao: "entre t_a e t_b, P1 e P2 mudam juntos: as distâncias mudam nos dois e continuam iguais entre si"}
+      - {id: E5.3, predicao: "o verificador independente confere a cadeia exportada (íntegra) e o mesmo hash de cabeça que a biblioteca"}
+      - {id: E5.4, predicao: "o comprimento recalculado pelo verificador coincide com P1 em t_b", tolerancia_m: 0.0005, origem: "exatidão de Vincenty (v0.4, ato 4)"}
+      - {id: E5.5, predicao: "alterado um campo do JSON exportado, o verificador acusa o evento alterado"}
+    contraste: "E1: os produtos reais (AOC 2213 e ADC 2604) divergem sem causa."
+
+  custo_de_leitura:
+    estado: "fora desta versão"
+    motivo: >-
+      H4 da v0.4 não chegou a ser verificada (o script de escala caiu) e a série
+      S2 mostrou leitura que cresce com o histórico. Corrigir é trabalho de
+      implementação; se entrar, entra numa v0.6 registrada antes de rodar, com
+      as mesmas predições da v0.4.

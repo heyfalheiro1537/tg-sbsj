@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 from pyproj import Geod
 
-from tg import ledger, referencial, relogio
+from aeroledger import ledger, referencial, relogio
 
 GEOD = Geod(ellps="GRS80")
 A = (-10.0, -50.0)

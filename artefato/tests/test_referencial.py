@@ -1,9 +1,9 @@
 """Referencial na forma B: as três regras e a integração com o ledger."""
 import pytest
 
-from tg import ledger, referencial, relogio
-from tg.ledger import LedgerError
-from tg.referencial import ReferencialError, Resolvedor
+from aeroledger import ledger, referencial, relogio
+from aeroledger.ledger import LedgerError
+from aeroledger.referencial import ReferencialError, Resolvedor
 from cenario_sintetico import A, B, GEOD, corpo_ref, montar, seed
 
 

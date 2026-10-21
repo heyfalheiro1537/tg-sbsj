@@ -3,8 +3,8 @@ from datetime import timedelta
 
 import pytest
 
-from tg import ledger, relogio
-from tg.ledger import LedgerError, REMOVIDO
+from aeroledger import ledger, relogio
+from aeroledger.ledger import LedgerError, REMOVIDO
 from cenario_sintetico import ORIGEM
 
 
@@ -101,8 +101,12 @@ def test_cadeia_integra_e_conteudo_alterado(conn, run):
 
 
 def test_canonico():
-    from tg.canonico import canonico
+    from aeroledger.canonico import canonico
     assert canonico({"b": 1, "a": [1.0, 2.5, None, True]}) == b'{"a":[1,2.5,null,true],"b":1}'
     assert canonico({"\u20ac": 1, "\r": 2, "1": 3}) == '{"\\r":2,"1":3,"\u20ac":1}'.encode()
+    # números pelo ECMAScript (RFC 8785): dígitos mais curtos, também acima de 2^53
+    for x, esperado in [(1e21, "1e+21"), (1e20, "100000000000000000000"), (1e-7, "1e-7"),
+                        (1.5e-6, "0.0000015"), (5.1521516039062726e+17, "515215160390627260")]:
+        assert canonico(x) == esperado.encode()
     with pytest.raises(ValueError):
         canonico(float("nan"))

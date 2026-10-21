@@ -1,7 +1,7 @@
 """Derivações (fictício) e cache de projeção por marca d'água."""
 import pytest
 
-from tg import derivacoes, ledger, projecao, referencial, relogio
+from aeroledger import derivacoes, ledger, projecao, referencial, relogio
 from cenario_sintetico import corpo_ref, montar, seed
 
 

@@ -72,7 +72,7 @@ LANGUAGE sql STABLE AS $$
 $$;
 
 -- Q5 (só a ligação) — eventos cujo prev_hash não é o hash do anterior.
--- A verificação completa (tg.ledger.verify_chain) também recalcula o hash do
+-- A verificação completa (aeroledger.ledger.verify_chain) também recalcula o hash do
 -- conteúdo: esta consulta sozinha não pega alteração de conteúdo sem
 -- recálculo do hash, achado já registrado na fase de agosto.
 CREATE OR REPLACE FUNCTION ligacao_quebrada(p_run TEXT) RETURNS TABLE (event_id BIGINT)

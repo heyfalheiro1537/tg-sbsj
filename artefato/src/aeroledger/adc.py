@@ -20,7 +20,7 @@ def projetar(conn, run_id, t=None, n_segmentos=16, usar_cache=False):
     """Conteúdo do ADC em t: elementos com geometria, nós e tabela de distâncias.
 
     usar_cache: lê os estados pela projeção com cache por marca d'água
-    (tg.projecao); o resultado tem de ser idêntico ao da leitura direta.
+    (aeroledger.projecao); o resultado tem de ser idêntico ao da leitura direta.
     """
     t_lim = ledger._limite(conn, run_id, t)
     ref_id, corpo = referencial_vigente(conn, run_id, t_lim)

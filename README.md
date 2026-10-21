@@ -1,28 +1,26 @@
-# TG — SBSJ
+# TG — dados aeroportuários auditáveis (SBSJ)
 
-Trabalho de graduação sobre metamodelagem paramétrica e dados auditáveis do lado ar de aeroportos, com o SBSJ (São José dos Campos) como cenário.
+Trabalho de graduação: uma arquitetura baseada em *event sourcing* para tornar dados de infraestrutura aeroportuária **geolocalizados e auditáveis**, com a pista do SBSJ (São José dos Campos) como estudo de caso.
 
-**Comece pelo [GUIA.md](GUIA.md):** o que foi feito, as decisões, como rodar e o que vem a seguir.
+**Comece pelo [GUIA.md](GUIA.md).**
 
-## Estrutura
+| Pasta | O que é |
+|---|---|
+| [`artefato/`](artefato/README.md) | a biblioteca Python `aeroledger` — o artefato do TG |
+| [`experimento/`](experimento/) | o notebook com os cinco experimentos, que usa a biblioteca passo a passo |
+| [`protocolo/`](protocolo/) | o que se previu antes de rodar (v0.4 congelada; v0.5 em rascunho) |
+| [`resultados/`](resultados/) | o registro de todas as execuções |
 
-- `protocolo/` — protocolo de falseamento (H1–H4), **congelado** antes de qualquer execução. Não editar: uma correção vira nova versão.
-- `artefato/` — o artefato do TG: esquema do banco, ledger, referencial, motor, derivações e testes.
-- `docker-compose.yml`, `Dockerfile.jupyter` — PostGIS + Jupyter.
-- `scripts/pg_local.sh` — PostgreSQL local, sem Docker.
-
-## Rodar os testes
+## Rodar
 
 ```sh
+git clone https://github.com/heyfalheiro1537/tg-sbsj && cd tg-sbsj
 pip install -r requirements.txt
-scripts/pg_local.sh
-cd artefato && python3 -m pytest -q tests
-```
+scripts/pg_local.sh                           # PostgreSQL local (ou: docker compose up -d)
 
-## Conferir o protocolo
-
-```sh
-cd protocolo && sha256sum -c PROTOCOLO.sha256
+cd artefato && python3 -m pytest -q && cd ..  # testes da biblioteca
+scripts/rodar_experimentos.sh --ensaio        # experimentos com dados fictícios
+scripts/rodar_experimentos.sh                 # experimentos oficiais (protocolo v0.5 congelado)
 ```
 
 ## Ressalva

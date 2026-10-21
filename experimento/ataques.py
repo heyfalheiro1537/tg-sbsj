@@ -1,7 +1,7 @@
-"""Bateria de adulteração de H3, sobre cópias do banco (protocolo H3.execucao).
+"""Ataques do E4 (subconjunto da bateria H3 da v0.4), sobre cópias do banco.
 
-Cada ataque roda numa cópia nova do banco do experimento, feita ao fim do ato
-5: o original nunca é tocado. O atacante escreve direto no Postgres, sem
+Cada ataque roda numa cópia nova do banco do experimento, feita ao fim do
+E3: o original nunca é tocado. O atacante escreve direto no Postgres, sem
 passar por append_event (modelo de ameaça do protocolo).
 
 k = evento do meio: o primeiro, a partir da metade da cadeia, que tem campos
@@ -11,9 +11,9 @@ de event_id logo depois (para H3.06). Regra fixada aqui, antes de rodar.
 import psycopg
 from psycopg.types.json import Jsonb
 
-from tg import ledger
-from tg.canonico import sha256
-from tg.ledger import conteudo_para_hash, ENVELOPE
+from aeroledger import ledger
+from aeroledger.canonico import sha256
+from aeroledger.ledger import conteudo_para_hash, ENVELOPE
 
 
 def copiar(admin_dsn, origem, destino):

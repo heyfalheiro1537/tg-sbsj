@@ -4,8 +4,8 @@ from math import cos, radians, sin
 import pytest
 from shapely.geometry import Point
 
-from tg import ledger, motor, referencial, relogio
-from tg.referencial import Resolvedor
+from aeroledger import ledger, motor, referencial, relogio
+from aeroledger.referencial import Resolvedor
 from cenario_sintetico import B, GEOD, corpo_ref, montar, seed
 
 

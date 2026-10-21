@@ -6,8 +6,8 @@ import random
 
 import pytest
 
-from tg import ledger, relogio
-from tg.ledger import REMOVIDO
+from aeroledger import ledger, relogio
+from aeroledger.ledger import REMOVIDO
 from cenario_sintetico import ORIGEM
 
 

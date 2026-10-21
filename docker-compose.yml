@@ -9,9 +9,9 @@ services:
       - "54329:5432"
     volumes:
       - dados:/var/lib/postgresql/data
-      - ./artefato/db/01_esquema.sql:/docker-entrypoint-initdb.d/01_esquema.sql:ro
-      - ./artefato/db/02_leitura.sql:/docker-entrypoint-initdb.d/02_leitura.sql:ro
-      - ./artefato/db/03_postgis.sql:/docker-entrypoint-initdb.d/03_postgis.sql:ro
+      - ./artefato/src/aeroledger/sql/01_esquema.sql:/docker-entrypoint-initdb.d/01_esquema.sql:ro
+      - ./artefato/src/aeroledger/sql/02_leitura.sql:/docker-entrypoint-initdb.d/02_leitura.sql:ro
+      - ./artefato/src/aeroledger/sql/03_postgis.sql:/docker-entrypoint-initdb.d/03_postgis.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U tg -d tg"]
       interval: 5s
@@ -25,8 +25,8 @@ services:
       db:
         condition: service_healthy
     environment:
-      TG_DSN: postgresql://tg:tg@db:5432/tg
-      TG_DSN_ADMIN: postgresql://tg:tg@db:5432/postgres
+      AEROLEDGER_DSN: postgresql://tg:tg@db:5432/tg
+      AEROLEDGER_DSN_ADMIN: postgresql://tg:tg@db:5432/postgres
     ports:
       - "8888:8888"
     volumes:

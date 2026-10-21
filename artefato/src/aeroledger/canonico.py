@@ -10,9 +10,16 @@ serializar o mesmo conteúdo. Regras do RFC 8785 aplicadas:
 import hashlib
 import json
 import math
+from decimal import Decimal
 
 
 def _numero(x):
+    """Number.prototype.toString do ECMAScript, como o RFC 8785 exige.
+
+    Usa os dígitos mais curtos que reproduzem o float (os mesmos do repr do
+    Python) e decide entre notação decimal e exponencial pela posição do ponto.
+    Inteiros de verdade (int) saem como estão.
+    """
     if isinstance(x, bool):
         raise TypeError("bool não é número")
     if isinstance(x, int):
@@ -21,21 +28,23 @@ def _numero(x):
         raise ValueError("NaN e infinito não têm forma canônica")
     if x == 0:
         return "0"
-    if x.is_integer() and abs(x) < 1e21:
-        return str(int(x))
-    r = repr(x)
-    if "e" in r:
-        mant, exp = r.split("e")
-        if mant.endswith(".0"):
-            mant = mant[:-2]
-        sinal = "-" if exp.startswith("-") else "+"
-        exp = exp.lstrip("+-").lstrip("0") or "0"
-        e = int(exp) * (-1 if sinal == "-" else 1)
-        # ECMAScript usa notação decimal entre 1e-7 e 1e21
-        if -7 < e < 21:
-            return format(x, f".{max(0, -e + len(mant.replace('-', '').replace('.', '')) - 1)}f").rstrip("0").rstrip(".")
-        return f"{mant}e{sinal}{exp}"
-    return r
+    sinal, digitos, expoente = Decimal(repr(x)).as_tuple()
+    digitos = list(digitos)
+    while len(digitos) > 1 and digitos[-1] == 0:
+        digitos.pop()
+        expoente += 1
+    d = "".join(map(str, digitos))
+    k = len(d)
+    n = k + expoente                      # x = 0.d × 10^n
+    s = "-" if sinal else ""
+    if k <= n <= 21:
+        return s + d + "0" * (n - k)
+    if 0 < n <= 21:
+        return s + d[:n] + "." + d[n:]
+    if -6 < n <= 0:
+        return s + "0." + "0" * (-n) + d
+    e = n - 1
+    return s + d[0] + ("." + d[1:] if k > 1 else "") + "e" + ("+" if e > 0 else "-") + str(abs(e))
 
 
 def _serializar(v):
